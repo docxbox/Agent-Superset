@@ -1,0 +1,9 @@
+workflow: feature
+steps:
+  - recon
+  - plan
+  - implementation
+  - test
+  - review
+  - repair
+  - verify

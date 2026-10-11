@@ -1,0 +1,8 @@
+workflow: bugfix
+steps:
+  - recon
+  - plan
+  - debugging
+  - test
+  - review
+  - verify

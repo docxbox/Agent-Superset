@@ -1,0 +1,9 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {SafeWorkspace,assertSafeCommand,resolveSpawnTarget,redactSecrets} from '../dist/security/policy.js';import {routeSkills} from '../dist/skills/discovery.js';
+test('workspace rejects traversal',()=>assert.throws(()=>new SafeWorkspace('/tmp/project').resolve('../secret')));
+test('dangerous commands are blocked',()=>assert.throws(()=>assertSafeCommand('rm -rf /')));
+test('absolute executables are blocked on every platform',()=>assert.throws(()=>assertSafeCommand({command:process.platform==='win32'?'C:\\\\evil\\\\rm.exe':'/bin/rm',args:[],display:'rm'})));
+test('routing includes universal baseline and matching skills',()=>{const s=[{name:'security',triggers:['oauth'],description:'',version:'1.0.0',path:'',body:''},{name:'testing',triggers:['test'],description:'',version:'1.0.0',path:'',body:''}];assert.deepEqual(routeSkills('Add OAuth and tests',s).map(x=>x.name),['security','testing']);});
+test('spawn target passes through on non-batch commands',async()=>{const t=await resolveSpawnTarget('definitely-not-a-real-command-xyz',[]);assert.equal(t.file,'definitely-not-a-real-command-xyz');assert.equal(t.verbatim,false);});
+test('spawn target detects npm shim on Windows',async()=>{if(process.platform!=='win32')return;const t=await resolveSpawnTarget('npm',['run','test']);assert.equal(t.verbatim,true);assert.match(t.file,/cmd\.exe$/i);assert.ok(t.args.join(' ').includes('npm.cmd'));});
+test('spawn target rejects multi-line batch arguments on Windows',async()=>{if(process.platform!=='win32')return;const resolved=await resolveSpawnTarget('npm.cmd',['run','test']);assert.equal(resolved.verbatim,true);await assert.rejects(()=>resolveSpawnTarget('npm.cmd',['line1\nline2']));});
+test('secret redaction masks tokens',()=>assert.match(redactSecrets('token ghp_abcdefghijklmnopqrstuvwxyz012345'),/\[REDACTED\]/));

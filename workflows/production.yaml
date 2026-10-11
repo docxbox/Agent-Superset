@@ -1,0 +1,10 @@
+workflow: production
+steps:
+  - recon
+  - plan
+  - implementation
+  - test
+  - security
+  - review
+  - production-readiness
+  - verify

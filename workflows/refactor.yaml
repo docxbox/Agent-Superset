@@ -1,0 +1,8 @@
+workflow: refactor
+steps:
+  - recon
+  - plan
+  - implementation
+  - test
+  - review
+  - verify

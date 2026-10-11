@@ -1,0 +1,5 @@
+[
+ {"name":"bug-fix","category":"bug fixes","prompt":"Fix a reproducible bug and add a regression test."},
+ {"name":"feature","category":"new features","prompt":"Implement a small feature with tests."},
+ {"name":"security","category":"security fixes","prompt":"Find and fix a security issue without regressions."}
+]
